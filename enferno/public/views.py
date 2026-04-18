@@ -37,6 +37,9 @@ def get_csrf_token() -> Response:
 @limiter.exempt
 def health() -> Response:
     """Readiness probe used by the bayanat updater. Touches DB and Redis."""
+    # v4.0.3 TEST ONLY: runtime-only failure so the updater reaches
+    # SWITCH then VERIFY fails, exercising ROLLBACK_CODE.
+    return jsonify({"status": "error", "error": "v4.0.3 test: intentional health failure"}), 503
     try:
         db.session.execute(text("SELECT 1"))
         rds.ping()
